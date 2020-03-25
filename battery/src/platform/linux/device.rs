@@ -48,23 +48,6 @@ impl SysFsDevice {
             technology,
         })
     }
-
-    pub fn refresh(&mut self) -> Result<()> {
-        // It is necessary to ensure that `self.root`
-        // still exists and accessible.
-        // See https://github.com/svartalf/rust-battery/issues/29
-        if self.root.is_dir() {
-            let builder = DataBuilder::new(&self.root);
-            self.source = builder.collect()?;
-
-            Ok(())
-        } else {
-            let inner = io::Error::from(io::ErrorKind::NotFound);
-            let e = Error::new(inner, format!("Device directory `{:?}` is missing", self.root));
-
-            Err(e)
-        }
-    }
 }
 
 impl BatteryDevice for SysFsDevice {
@@ -122,6 +105,23 @@ impl BatteryDevice for SysFsDevice {
 
     fn cycle_count(&self) -> Option<u32> {
         self.source.cycle_count
+    }
+
+    fn refresh(&mut self) -> Result<()> {
+        // It is necessary to ensure that `self.root`
+        // still exists and accessible.
+        // See https://github.com/svartalf/rust-battery/issues/29
+        if self.root.is_dir() {
+            let builder = DataBuilder::new(&self.root);
+            self.source = builder.collect()?;
+
+            Ok(())
+        } else {
+            let inner = io::Error::from(io::ErrorKind::NotFound);
+            let e = Error::new(inner, format!("Device directory `{:?}` is missing", self.root));
+
+            Err(e)
+        }
     }
 }
 

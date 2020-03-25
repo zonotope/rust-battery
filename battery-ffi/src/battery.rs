@@ -14,6 +14,28 @@ use battery::units::ratio::percent;
 use battery::units::thermodynamic_temperature::kelvin;
 use battery::units::time::second;
 
+/// Refreshes battery information.
+///
+/// # Panics
+///
+/// This function will panic if any passed pointer is `NULL`
+///
+/// # Returns
+///
+/// `0` if everything is okay, `-1` if refresh failed and `battery_ptr` contains stale information.
+pub unsafe extern "C" fn battery_refresh(ptr: *mut Battery) -> libc::c_int {
+    assert!(!ptr.is_null());
+    let battery = &mut *ptr;
+
+    match battery.refresh() {
+        Ok(_) => 0,
+        Err(e) => {
+            crate::errors::set_last_error(e);
+            -1
+        }
+    }
+}
+
 /// Returns battery state of charge as a percentage value from `0.0` to `100.0`.
 ///
 /// # Panics

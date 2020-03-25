@@ -58,10 +58,24 @@ impl PowerDevice {
         Ok(Some(device))
     }
 
-    pub fn refresh(&mut self, mut handle: DeviceHandle) -> Result<()> {
-        let info = handle.information()?;
+    pub fn tag(&self) -> &BatteryQueryInformation {
+        &self.tag
+    }
+}
 
-        let status = handle.status()?;
+impl BatteryDevice for PowerDevice {
+    fn refresh(&mut self) -> Result<()> {
+        let battery_tag = self.tag().clone();
+        let di = ffi::DeviceIterator::new()?;
+        let handle = di.prepare_handle()?;
+        let device_handle = ffi::DeviceHandle {
+            handle,
+            tag: battery_tag,
+        };
+
+        let info = device_handle.information()?;
+
+        let status = device_handle.status()?;
         let rate = match status.rate() {
             None => return Err(Error::invalid_data("Device rate value is unknown")),
             Some(value) => milliwatt!(value),
@@ -74,7 +88,7 @@ impl PowerDevice {
             None => return Err(Error::invalid_data("Device voltage value is unknown")),
             Some(value) => millivolt!(value),
         };
-        let temperature = match handle.temperature() {
+        let temperature = match device_handle.temperature() {
             Ok(value) => Some(decikelvin!(value)),
             Err(_) => None,
         };
@@ -91,12 +105,6 @@ impl PowerDevice {
         Ok(())
     }
 
-    pub fn tag(&self) -> &BatteryQueryInformation {
-        &self.tag
-    }
-}
-
-impl BatteryDevice for PowerDevice {
     fn energy(&self) -> Energy {
         self.capacity
     }

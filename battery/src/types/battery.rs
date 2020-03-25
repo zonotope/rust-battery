@@ -21,6 +21,11 @@ where
     Device: BatteryDevice;
 
 impl Battery {
+    /// Refresh battery information in-place.
+    pub fn refresh(&mut self) -> crate::Result<()> {
+        self.0.refresh()
+    }
+
     /// Battery state of charge.
     ///
     /// The *State of Charge* (or *SOC*) is an expression of the battery capacity

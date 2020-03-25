@@ -4,11 +4,11 @@ use std::rc::Rc;
 use crate::platform::traits::*;
 use crate::platform::Iterator as PlatformIterator;
 use crate::platform::Manager as PlatformManager;
-use crate::{Batteries, Battery, Result};
+use crate::{Batteries, Result};
 
-/// Manager for batteries available in system.
+/// Manager for fetching batteries available in system.
 ///
-/// Knows how to fetch them and update information.
+///
 ///
 /// # Example
 ///
@@ -40,11 +40,6 @@ impl Manager {
         let inner = PlatformIterator::new(self.inner.clone())?;
 
         Ok(Batteries::from(inner))
-    }
-
-    /// Refresh battery information in-place.
-    pub fn refresh(&self, battery: &mut Battery) -> Result<()> {
-        self.inner.refresh(battery)
     }
 }
 

@@ -1,6 +1,5 @@
 use std::path::{Path, PathBuf};
 
-use super::device::SysFsDevice;
 use super::iterator::SysFsIterator;
 use crate::platform::traits::*;
 use crate::Result;
@@ -26,9 +25,5 @@ impl BatteryManager for SysFsManager {
         Ok(Self {
             root: PathBuf::from(SYSFS_ROOT),
         })
-    }
-
-    fn refresh(&self, device: &mut SysFsDevice) -> Result<()> {
-        device.refresh()
     }
 }

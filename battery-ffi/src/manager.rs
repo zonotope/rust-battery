@@ -1,6 +1,6 @@
 use std::ptr;
 
-use crate::{Batteries, Battery, Manager};
+use crate::{Batteries, Manager};
 
 /// Creates new batteries manager instance.
 ///
@@ -47,31 +47,6 @@ pub unsafe extern "C" fn battery_manager_iter(ptr: *mut Manager) -> *mut Batteri
         Err(e) => {
             crate::errors::set_last_error(e);
             ptr::null_mut()
-        }
-    }
-}
-
-/// Refreshes battery information.
-///
-/// # Panics
-///
-/// This function will panic if any passed pointer is `NULL`
-///
-/// # Returns
-///
-/// `0` if everything is okay, `-1` if refresh failed and `battery_ptr` contains stale information.
-pub unsafe extern "C" fn battery_manager_refresh(manager_ptr: *mut Manager, battery_ptr: *mut Battery) -> libc::c_int {
-    assert!(!manager_ptr.is_null());
-    let manager = &mut *manager_ptr;
-
-    assert!(!battery_ptr.is_null());
-    let mut battery = &mut *battery_ptr;
-
-    match manager.refresh(&mut battery) {
-        Ok(_) => 0,
-        Err(e) => {
-            crate::errors::set_last_error(e);
-            -1
         }
     }
 }

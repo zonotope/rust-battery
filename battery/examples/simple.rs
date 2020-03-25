@@ -21,6 +21,6 @@ fn main() -> battery::Result<()> {
     loop {
         println!("{:?}", battery);
         thread::sleep(Duration::from_secs(1));
-        manager.refresh(&mut battery)?;
+        battery.refresh()?;
     }
 }

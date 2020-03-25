@@ -24,13 +24,13 @@ impl IoKitDevice {
     pub fn get_mut_ref(&mut self) -> &mut dyn DataSource {
         &mut self.source
     }
-
-    pub fn refresh(&mut self) -> Result<()> {
-        self.source.refresh()
-    }
 }
 
 impl BatteryDevice for IoKitDevice {
+    pub fn refresh(&mut self) -> Result<()> {
+        self.source.refresh()
+    }
+
     fn energy(&self) -> Energy {
         self.source.current_capacity() * self.source.voltage()
     }

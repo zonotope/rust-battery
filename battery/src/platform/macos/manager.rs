@@ -15,10 +15,6 @@ impl BatteryManager for IoKitManager {
 
         Ok(Self(port))
     }
-
-    fn refresh(&self, device: &mut <Self::Iterator as BatteryIterator>::Device) -> Result<()> {
-        device.refresh()
-    }
 }
 
 impl Deref for IoKitManager {
